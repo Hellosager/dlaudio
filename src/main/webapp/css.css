@@ -1,3 +1,94 @@
-body {
-	background-color: grey;
+
+body, html {
+	margin: 0;
+	padding: 0;
+	text-align: center;
+}
+header {
+	width:100%;
+	height:65px;
+	position: fixed;
+	top: 0;
+	left: 0;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+	z-index: 1;
+	background: rgba(0, 0, 0, 0.5); /* Black background with 0.5 opacity */
+}
+header h1{
+	color: #fff;
+}
+
+form input, textarea {
+	font-family: 'Roboto Splap', serif;
+	font-size: 15px;
+	margin-bottom: 10px;
+	border-radius: 2px;
+	border: 2px solid;
+	border-color: #494949;
+	outline: none;
+}
+form p{
+	color: white;
+	font-family: 'Roboto Splap', serif;
+	font-size: 15px;
+}
+form input:first-child {
+	margin-top: 10px;
+} 
+
+form input {
+	width: 552px;
+	height: 30px;
+}
+form input[type=file]{
+		color: white;
+	font-family: 'Roboto Splap', serif;
+	font-size: 15px;
+} 
+.input_text {
+	color: #494949;
+	padding-left:10px;
+}
+.button {
+	background-color: #f0f0f0;
+	color: #494949;
+	width: 552px;
+	height: 50px;
+}
+.button:hover {
+	background-color: #494949;
+	color: #f0f0f0;
+}
+#content{
+	margin-top: 100px;
+}
+#myVideo {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%; 
+    min-height: 100%;
+	z-index: -100;
+}
+footer {
+	position: fixed;
+	left: 0;
+    bottom: 0;
+	width: 100%;
+	height: 70px;
+	background: rgba(0, 0, 0, 0.5);
+}
+footer p {
+	font-size: 12px;
+	color: #fff;
+	padding-top: 5px;
+}
+div {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+	background: rgba(0, 0, 0, 0.5);
+	margin: auto;
+	text-align: center;
+	max-width: 600px;
 }

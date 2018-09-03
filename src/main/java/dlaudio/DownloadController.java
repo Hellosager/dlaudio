@@ -43,7 +43,7 @@ public class DownloadController {
 	
 	@RequestMapping(value="/download/{resourceName}", method=RequestMethod.GET)
 	public void downloadResource(@PathVariable(value="resourceName") String resourceName, HttpServletResponse response) {
-		response.setHeader("Content-Disposition", "attachment;filename=\"" + "Musik\\" + resourceName + "\"");	// TODO HARDCODED
+		response.setHeader("Content-Disposition", "attachment;filename=\"" + resourceName + "\"");	// TODO HARDCODED
 		InputStream stream;
 		try {
 			stream = new FileInputStream(new File("Musik\\" + resourceName));	// TODO HARDCODED

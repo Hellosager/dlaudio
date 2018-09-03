@@ -23,6 +23,7 @@ public class Application {
     }
     
 	// Copy lib folder when not present
+    // TODO refactor this when linux support is added
 	private static void copyLibariesToLocal() {
 		File ffmpeg = new File("lib\\ffmpeg");
 		File win = new File("lib\\win");
