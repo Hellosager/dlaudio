@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,31 +24,40 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import AudioStripper.AudioStripper;
+import AudioStripper.ConvertingProcess;
+import AudioStripper.SingleLinkConvertingProcess;
 
 @Controller
 public class DownloadController {
+	private HashMap<Integer, ConvertingProcess> processes = new HashMap<>();
 
 	@RequestMapping(value = "/convert", method = RequestMethod.GET)
-	public String getMP3FromVideo(@RequestParam("link") String link, ModelAndView model)
+	public String getMP3FromVideo(@RequestParam("link") String link, Model model)
 			throws IOException, InterruptedException {
+		model.addAttribute("convertCall", "link");
 		AudioStripper as = new AudioStripper("Videos", "Musik");
+		int pid = processes.size();
+		model.addAttribute("pid", pid);
+		SingleLinkConvertingProcess slcp = new SingleLinkConvertingProcess(link, as);
+		processes.put(pid, slcp);
+		model.addAttribute("maxProgress", slcp.getMaxProgress());
 		new Thread() {
 
 			@Override
 			public void run() {
-				try {
-					String pathMp3File = as.stripAudioFromVideoLink(link).replaceAll(".mp4", ".mp3")
-							.replaceFirst("Musik\\\\", "");
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+//				try {
+					processes.get(pid).start();
+//					String pathMp3File = as.stripAudioFromVideoLink(link).replaceAll(".mp4", ".mp3")
+//							.replaceFirst("Musik\\\\", "");
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
 			}
 		}.start();
 		System.out.println("FREE");
@@ -76,8 +86,9 @@ public class DownloadController {
 
 	@RequestMapping(value = "/convert", method = RequestMethod.POST)
 	public RedirectView getMP3sFromVideo(@ModelAttribute("textFile") MultipartFile textFile,
-			RedirectAttributes attributes) throws IOException, InterruptedException {
+			RedirectAttributes attributes, Model model) throws IOException, InterruptedException {
 		System.out.println("inmethod");
+		model.addAttribute("convertCall", "file");
 		attributes.addFlashAttribute("flashAttribute", "redirectWithRedirectView");
 		attributes.addAttribute("attribute", "redirectWithRedirectView");
 		String fileContent = new String(textFile.getBytes());
@@ -94,14 +105,12 @@ public class DownloadController {
 	// TODO find way to get duration from video with ffmpeg output
 	// TODO remove hardcode and replace it with logic that calculates processed video
 	// from video duration
-	private int progress = 0;
 
-	@GetMapping(value = "/retrieveProgress", produces = "application/json")
+	@GetMapping(value = "/retrieveProgress/{pid}", produces = "application/json")
 	@ResponseBody
-	public Map<String, Integer> retrieveProgress() {
-		progress++;
+	public Map<String, Integer> retrieveProgress(@PathVariable(value = "pid") int pid) {
 		HashMap<String, Integer> map = new HashMap<>();
-		map.put("progress", progress);
+		map.put("progress", processes.get(pid).getCurrentProgress());
 		return map;
 	}
 
