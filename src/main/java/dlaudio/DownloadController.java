@@ -24,11 +24,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import AudioStripper.AudioStripper;
 import AudioStripper.ConvertingProcess;
+import AudioStripper.MultiLinkConvertingProcess;
 import AudioStripper.SingleLinkConvertingProcess;
 
 @Controller
@@ -38,68 +40,52 @@ public class DownloadController {
 	@RequestMapping(value = "/convert", method = RequestMethod.GET)
 	public String getMP3FromVideo(@RequestParam("link") String link, Model model)
 			throws IOException, InterruptedException {
-		model.addAttribute("convertCall", "link");
+		model.addAttribute("type", "single");
 		AudioStripper as = new AudioStripper("Videos", "Musik");
-		int pid = processes.size();
-		model.addAttribute("pid", pid);
-		SingleLinkConvertingProcess slcp = new SingleLinkConvertingProcess(link, as);
-		processes.put(pid, slcp);
-		model.addAttribute("maxProgress", slcp.getMaxProgress());
-		new Thread() {
+		startConvertingProcess(new SingleLinkConvertingProcess(link, as), model);
 
-			@Override
-			public void run() {
-//				try {
-					processes.get(pid).start();
-//					String pathMp3File = as.stripAudioFromVideoLink(link).replaceAll(".mp4", ".mp3")
-//							.replaceFirst("Musik\\\\", "");
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-			}
-		}.start();
-		System.out.println("FREE");
-		// System.out.println("resName: " + pathMp3File);
-
-		System.out.println("redirecting...");
 		return "progress";
 	}
+	
 
-	@RequestMapping(value = "/download/{resourceName}", method = RequestMethod.GET)
-	public void downloadResource(@PathVariable(value = "resourceName") String resourceName,
+	@RequestMapping(value = "/download/{pid}", method = RequestMethod.GET)
+	public void downloadResource(@PathVariable(value = "pid") int pid,
 			HttpServletResponse response) {
+		String resourceName = null;
+		ConvertingProcess process = processes.get(pid);
+		if(process instanceof SingleLinkConvertingProcess) {
+			SingleLinkConvertingProcess slcp = (SingleLinkConvertingProcess) process;
+			resourceName = slcp.getMP3Path();
+		}else if(process instanceof MultiLinkConvertingProcess) {
+			MultiLinkConvertingProcess mlcp = (MultiLinkConvertingProcess) process;
+			try {
+				resourceName = zipFiles(mlcp.getMP3Paths());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		response.setHeader("Content-Disposition", "attachment;filename=\"" + resourceName + "\""); // TODO HARDCODED
 		InputStream stream;
 		try {
-			stream = new FileInputStream(new File("Musik\\" + resourceName)); // TODO HARDCODED
+			stream = new FileInputStream(new File(resourceName)); // TODO HARDCODED
 			IOUtils.copy(stream, response.getOutputStream());
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	@RequestMapping(value = "/convert", method = RequestMethod.POST)
-	public RedirectView getMP3sFromVideo(@ModelAttribute("textFile") MultipartFile textFile,
-			RedirectAttributes attributes, Model model) throws IOException, InterruptedException {
+	public String getMP3sFromVideo(@ModelAttribute("textFile") MultipartFile textFile, Model model) throws IOException, InterruptedException {
 		System.out.println("inmethod");
-		model.addAttribute("convertCall", "file");
-		attributes.addFlashAttribute("flashAttribute", "redirectWithRedirectView");
-		attributes.addAttribute("attribute", "redirectWithRedirectView");
+		model.addAttribute("type", "multi");
 		String fileContent = new String(textFile.getBytes());
 		String[] links = fileContent.split("\n");
 		AudioStripper as = new AudioStripper("Videos", "Musik");
-		String[] downloadedMP3Paths = as.stripAudioFromVideoLinks(links);
-
-		// Zip it
-		String zipName = zipFiles(downloadedMP3Paths);
-
-		return new RedirectView("download/" + zipName);
+		startConvertingProcess(new MultiLinkConvertingProcess(links, as), model);
+		return "progress";
 	}
 
 	// TODO find way to get duration from video with ffmpeg output
@@ -140,6 +126,19 @@ public class DownloadController {
 		zipOutputStream.close();
 		fos.close();
 
-		return uniqueZipName;
+		return "Musik\\" + uniqueZipName;
+	}
+	
+	private void startConvertingProcess(ConvertingProcess process, Model model) {
+		int pid = processes.size();
+		model.addAttribute("pid", pid);
+		processes.put(pid, process);
+		model.addAttribute("maxProgress", process.getMaxProgress());
+		new Thread() {
+			@Override
+			public void run() {
+				process.start();
+			}
+		}.start();
 	}
 }
