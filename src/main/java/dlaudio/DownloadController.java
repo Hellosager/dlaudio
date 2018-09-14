@@ -11,9 +11,11 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,10 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
 import AudioStripper.AudioStripper;
 import AudioStripper.ConvertingProcess;
@@ -35,6 +35,10 @@ import AudioStripper.SingleLinkConvertingProcess;
 
 @Controller
 public class DownloadController {
+	
+	@Autowired
+	ServletContext servletContext;
+	
 	private HashMap<Integer, ConvertingProcess> processes = new HashMap<>();
 
 	@RequestMapping(value = "/convert", method = RequestMethod.GET)
@@ -47,7 +51,14 @@ public class DownloadController {
 		return "progress";
 	}
 	
-
+	// TODO to hardcoded, no support for other formats, refactor if needed
+	@RequestMapping(value = "/background.mp4", method = RequestMethod.GET)
+	public void getBackgroundVideo(HttpServletResponse response) throws IOException {
+		InputStream stream = servletContext.getResourceAsStream("background.mp4");
+	    response.setContentType("video/mp4");
+	    IOUtils.copy(stream, response.getOutputStream());
+	}
+	
 	@RequestMapping(value = "/download/{pid}", method = RequestMethod.GET)
 	public void downloadResource(@PathVariable(value = "pid") int pid,
 			HttpServletResponse response) {
@@ -68,7 +79,7 @@ public class DownloadController {
 		response.setHeader("Content-Disposition", "attachment;filename=\"" + resourceName + "\""); // TODO HARDCODED
 		InputStream stream;
 		try {
-			stream = new FileInputStream(new File(resourceName)); // TODO HARDCODED
+			stream = new FileInputStream(new File(resourceName));
 			IOUtils.copy(stream, response.getOutputStream());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -141,4 +152,5 @@ public class DownloadController {
 			}
 		}.start();
 	}
+
 }
