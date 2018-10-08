@@ -25,9 +25,11 @@ public class Application {
 	private static void copyLibariesToLocal() {
 		File ffmpeg = new File("lib\\ffmpeg");
 		File win = new File("lib\\win");
-		if (!win.exists() || !ffmpeg.exists()) {
+		File ffprobe = new File("lib\\ffprobe");
+		if (!win.exists() || !ffmpeg.exists() || !ffprobe.exists()) {
 			win.mkdirs();
 			ffmpeg.mkdirs();
+			ffprobe.mkdirs();
 			JarFile jarFile = null;
 			try {
 				String classFilePath = Application.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("%20", " ");
@@ -39,6 +41,7 @@ public class Application {
 					JarEntry entry = entries.nextElement();
 					copyDirectory(entry, jarFilePath, "lib/ffmpeg");
 					copyDirectory(entry, jarFilePath, "lib/win");
+					copyDirectory(entry, jarFilePath, "lib/ffprobe");
 				}
 			} catch (IOException ioex) {
 				ioex.printStackTrace();
