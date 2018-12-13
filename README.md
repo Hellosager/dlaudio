@@ -3,7 +3,7 @@
 Work in Progress:
 
 * can be launched with <code>java -jar dlaudio.war</code>
-* can be reached at localhost:8080 by default
+* can be reached at <code>localhost:8080</code> by default
 * creates lib directory on startup if non existent
 * downloades videos in a directory and saves audio in another
 * directories can't currently be set on startup
