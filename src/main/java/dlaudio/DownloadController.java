@@ -34,10 +34,10 @@ import AudioStripper.SingleLinkConvertingProcess;
 
 @Controller
 public class DownloadController {
-	
+
 	@Autowired
 	ServletContext servletContext;
-	
+
 	private HashMap<Integer, ConvertingProcess> processes = new HashMap<>();
 
 	@RequestMapping(value = "/convert", method = RequestMethod.GET)
@@ -49,27 +49,30 @@ public class DownloadController {
 
 		return "progress";
 	}
-	
+
 	// TODO to hardcoded, no support for other formats, refactor if needed
 	@RequestMapping(value = "/background.mp4", method = RequestMethod.GET)
 	public void getBackgroundVideo(HttpServletResponse response) throws IOException {
 		InputStream stream = servletContext.getResourceAsStream("background.mp4");
-	    response.setContentType("video/mp4");
-	    IOUtils.copy(stream, response.getOutputStream());
+		response.setContentType("video/mp4");
+		IOUtils.copy(stream, response.getOutputStream());
 	}
-	
+
 	@RequestMapping(value = "/download/{pid}", method = RequestMethod.GET)
 	public void downloadResource(@PathVariable(value = "pid") int pid,
 			HttpServletResponse response) {
+		String resourcePath = null;
 		String resourceName = null;
 		ConvertingProcess process = processes.get(pid);
 		if(process instanceof SingleLinkConvertingProcess) {
 			SingleLinkConvertingProcess slcp = (SingleLinkConvertingProcess) process;
-			resourceName = slcp.getMP3Path();
+			resourcePath = slcp.getResourcePath();
+			resourceName = slcp.getResourceName();
 		}else if(process instanceof MultiLinkConvertingProcess) {
 			MultiLinkConvertingProcess mlcp = (MultiLinkConvertingProcess) process;
 			try {
-				resourceName = zipFiles(mlcp.getMP3Paths());
+				resourcePath = zipFiles(mlcp.getMP3Paths());
+				resourceName = new File(resourcePath).getName();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -78,7 +81,7 @@ public class DownloadController {
 		response.setHeader("Content-Disposition", "attachment;filename=\"" + resourceName + "\""); // TODO HARDCODED
 		InputStream stream;
 		try {
-			stream = new FileInputStream(new File(resourceName));
+			stream = new FileInputStream(new File(resourcePath));
 			IOUtils.copy(stream, response.getOutputStream());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -88,7 +91,8 @@ public class DownloadController {
 	}
 
 	@RequestMapping(value = "/convert", method = RequestMethod.POST)
-	public String getMP3sFromVideo(@ModelAttribute("textFile") MultipartFile textFile, Model model) throws IOException, InterruptedException {
+	public String getMP3sFromVideo(@ModelAttribute("textFile") MultipartFile textFile, Model model)
+			throws IOException, InterruptedException {
 		System.out.println("inmethod");
 		model.addAttribute("type", "multi");
 		String fileContent = new String(textFile.getBytes());
@@ -99,7 +103,8 @@ public class DownloadController {
 	}
 
 	// TODO find way to get duration from video with ffmpeg output
-	// TODO remove hardcode and replace it with logic that calculates processed video
+	// TODO remove hardcode and replace it with logic that calculates processed
+	// video
 	// from video duration
 
 	@GetMapping(value = "/retrieveProgress/{pid}", produces = "application/json")
@@ -138,7 +143,7 @@ public class DownloadController {
 
 		return "Musik\\" + uniqueZipName;
 	}
-	
+
 	private void startConvertingProcess(ConvertingProcess process, Model model) {
 		int pid = processes.size();
 		model.addAttribute("pid", pid);
