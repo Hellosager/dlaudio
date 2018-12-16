@@ -14,3 +14,5 @@ Work in Progress:
 * audios are beeing kept
 * backed by ffmpeg to expose audio of videos
 * still full of bugs, and unoptimized logic
+
+Get latest version here: https://github.com/Hellosager/dlaudio/releases/latest
