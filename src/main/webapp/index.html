@@ -12,15 +12,33 @@
 			<source src="background.mp4" type="video/mp4">
 		</video>
 		<div id="content">
-			<form method="GET" action="/convert">
-					<input class="input_text" type="text" name="link" placeholder="Link"/><br>
-					<input class="button" type="submit" value="Convert Link" /><br>
-			</form>	
-			<form method="POST" enctype="multipart/form-data" action="/convert">
-				<p>Or chose a textfile that contains the links</p><br>
-				<input class="input_text" type="file" name="textFile"/><br>
-				<input class="button" type="submit" value="Send File to Server" /><br>
-			</form>
+			<div class="tabbed">
+			   <input checked="checked" id="tab1" type="radio" name="tabs" />
+			   <input id="tab2" type="radio" name="tabs" />
+			   <input id="tab3" type="radio" name="tabs" />
+			
+			   <nav>
+			      <label for="tab1" class="hvr-bounce-to-top">MP3</label>
+			      <label for="tab2" class="hvr-bounce-to-top">Video</label>
+			      <label for="tab3" class="hvr-bounce-to-top">Liste</label>
+			   </nav>
+			   
+				<div>
+					<div class="mp3">			
+						<form method="GET" action="/convert">
+							<input class="input_text" type="text" name="link" placeholder="Link"/><br>
+							<input class="button" type="submit" value="Convert Link" /><br>
+						</form>	
+					</div>
+					<div class="video">Video scheiß</div>
+					<div class="list">
+						<form method="POST" enctype="multipart/form-data" action="/convert">
+							<input class="input_text" type="file" name="textFile"/><br>
+							<input class="button" type="submit" value="Send File to Server" /><br>
+						</form>
+					</div>
+				</div>
+			</div>
 		</div>
 		<footer>
 			<p>Powered by S. Beck</p>
