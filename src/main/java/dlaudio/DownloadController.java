@@ -40,15 +40,6 @@ public class DownloadController {
 
 	private HashMap<Integer, ConvertingProcess> processes = new HashMap<>();
 
-	@RequestMapping(value = "/convert", method = RequestMethod.GET)
-	public String getMP3FromVideo(@RequestParam("link") String link, Model model)
-			throws IOException, InterruptedException {
-		model.addAttribute("type", "single");
-		AudioStripper as = new AudioStripper("Videos", "Musik");
-		startConvertingProcess(new SingleLinkConvertingProcess(link, as), model);
-
-		return "progress";
-	}
 
 	// TODO to hardcoded, no support for other formats, refactor if needed
 	@RequestMapping(value = "/background.mp4", method = RequestMethod.GET)
@@ -89,6 +80,16 @@ public class DownloadController {
 			e.printStackTrace();
 		}
 	}
+	
+	@RequestMapping(value = "/convert", method = RequestMethod.GET)
+	public String getMP3FromVideo(@RequestParam("link") String link, Model model)
+			throws IOException, InterruptedException {
+		model.addAttribute("type", "single");
+		AudioStripper as = new AudioStripper("Videos", "Musik");
+		startConvertingProcess(new SingleLinkConvertingProcess(link, as), model);
+		
+		return "progress";
+	}
 
 	@RequestMapping(value = "/convert", method = RequestMethod.POST)
 	public String getMP3sFromVideo(@ModelAttribute("textFile") MultipartFile textFile, Model model)
@@ -101,11 +102,6 @@ public class DownloadController {
 		startConvertingProcess(new MultiLinkConvertingProcess(links, as), model);
 		return "progress";
 	}
-
-	// TODO find way to get duration from video with ffmpeg output
-	// TODO remove hardcode and replace it with logic that calculates processed
-	// video
-	// from video duration
 
 	@GetMapping(value = "/retrieveProgress/{pid}", produces = "application/json")
 	@ResponseBody
