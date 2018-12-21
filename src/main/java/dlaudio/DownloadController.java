@@ -28,9 +28,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import AudioStripper.AudioStripper;
-import AudioStripper.ConvertingProcess;
-import AudioStripper.MultiLinkConvertingProcess;
-import AudioStripper.SingleLinkConvertingProcess;
+import AudioStripperProcesses.AudioStripperProcess;
+import AudioStripperProcesses.AudioConvertingProcesses.MultiLinkAudioConvertingProcess;
+import AudioStripperProcesses.AudioConvertingProcesses.SingleLinkAudioConvertingProcess;
+import AudioStripperProcesses.VideoDownloadProcesses.SingleLinkVideoDownloadProcess;
+
 
 @Controller
 public class DownloadController {
@@ -38,7 +40,7 @@ public class DownloadController {
 	@Autowired
 	ServletContext servletContext;
 
-	private HashMap<Integer, ConvertingProcess> processes = new HashMap<>();
+	private HashMap<Integer, AudioStripperProcess> processes = new HashMap<>();
 
 
 	// TODO to hardcoded, no support for other formats, refactor if needed
@@ -54,19 +56,23 @@ public class DownloadController {
 			HttpServletResponse response) {
 		String resourcePath = null;
 		String resourceName = null;
-		ConvertingProcess process = processes.get(pid);
-		if(process instanceof SingleLinkConvertingProcess) {
-			SingleLinkConvertingProcess slcp = (SingleLinkConvertingProcess) process;
+		AudioStripperProcess process = processes.get(pid);
+		if(process instanceof SingleLinkAudioConvertingProcess) {
+			SingleLinkAudioConvertingProcess slcp = (SingleLinkAudioConvertingProcess) process;
 			resourcePath = slcp.getResourcePath();
 			resourceName = slcp.getResourceName();
-		}else if(process instanceof MultiLinkConvertingProcess) {
-			MultiLinkConvertingProcess mlcp = (MultiLinkConvertingProcess) process;
+		}else if(process instanceof MultiLinkAudioConvertingProcess) {
+			MultiLinkAudioConvertingProcess mlcp = (MultiLinkAudioConvertingProcess) process;
 			try {
 				resourcePath = zipFiles(mlcp.getMP3Paths());
 				resourceName = new File(resourcePath).getName();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}else if(process instanceof SingleLinkVideoDownloadProcess) {
+			SingleLinkVideoDownloadProcess slvdp = (SingleLinkVideoDownloadProcess) process;
+			resourcePath = slvdp.getDownloadedVideoPath();
+			resourceName = slvdp.getDownloadedResourceName();
 		}
 		
 		response.setHeader("Content-Disposition", "attachment;filename=\"" + resourceName + "\""); // TODO HARDCODED
@@ -86,7 +92,7 @@ public class DownloadController {
 			throws IOException, InterruptedException {
 		model.addAttribute("type", "single");
 		AudioStripper as = new AudioStripper("Videos", "Musik");
-		startConvertingProcess(new SingleLinkConvertingProcess(link, as), model);
+		startAudioStripperProcess(new SingleLinkAudioConvertingProcess(link, as), model);
 		
 		return "progress";
 	}
@@ -99,7 +105,17 @@ public class DownloadController {
 		String fileContent = new String(textFile.getBytes());
 		String[] links = fileContent.split("\n");
 		AudioStripper as = new AudioStripper("Videos", "Musik");
-		startConvertingProcess(new MultiLinkConvertingProcess(links, as), model);
+		startAudioStripperProcess(new MultiLinkAudioConvertingProcess(links, as), model);
+		return "progress";
+	}
+	
+	@RequestMapping(value = "/convertVideo", method = RequestMethod.GET)
+	public String downloadVideo(@RequestParam("link") String link, Model model)
+			throws IOException, InterruptedException {
+		model.addAttribute("type", "singleVideo");
+		AudioStripper as = new AudioStripper("Videos", "Musik");
+		startAudioStripperProcess(new SingleLinkVideoDownloadProcess(link, as) , model);
+		
 		return "progress";
 	}
 
@@ -140,7 +156,7 @@ public class DownloadController {
 		return "Musik\\" + uniqueZipName;
 	}
 
-	private void startConvertingProcess(ConvertingProcess process, Model model) {
+	private void startAudioStripperProcess(AudioStripperProcess process, Model model) {
 		int pid = processes.size();
 		model.addAttribute("pid", pid);
 		processes.put(pid, process);
