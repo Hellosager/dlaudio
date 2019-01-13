@@ -134,8 +134,8 @@ public class DownloadController {
 
 	private String zipFiles(String[] filePaths) throws IOException {
 		String uniqueZipName = "converted-mp3s-" + System.currentTimeMillis() + ".zip";
-		System.out.println("Storing downloaded files in " + "Musik\\" + uniqueZipName);
-		FileOutputStream fos = new FileOutputStream("Musik\\" + uniqueZipName);
+		System.out.println("Storing downloaded files in " + "Musik/" + uniqueZipName);
+		FileOutputStream fos = new FileOutputStream("Musik/" + uniqueZipName);
 		ZipOutputStream zipOutputStream = new ZipOutputStream(fos);
 		for (String path : filePaths) {
 			File fileToZip = new File(path);

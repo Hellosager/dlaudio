@@ -19,7 +19,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class Application {
-	public static String OS_NAME = System.getProperty("os.name");
+	public static final String OS_NAME = System.getProperty("os.name");
+	private static final boolean IS_WINDOWS_10 = !OS_NAME.equalsIgnoreCase("Linux");
+	public static final String PATH_TO_FFMPEG = !IS_WINDOWS_10 ? "ffmpeg" : "lib/ffmpeg";
+	public static final String PATH_TO_VIDEO = !IS_WINDOWS_10 ? "lib/video/arm" : "lib/video/win";
 	
     public static void main(String[] args) {
     	copyLibariesToLocal();
@@ -29,27 +32,27 @@ public class Application {
 	// Copy lib folder when not present
     // TODO refactor this when linux support is added
 	private static void copyLibariesToLocal() {
-		File ffmpeg = new File("lib/ffmpeg");
-		File win = new File("lib/win");
-		File ffprobe = new File("lib/ffprobe");
-		if (!win.exists() || !ffmpeg.exists() || !ffprobe.exists()) {
-			win.mkdirs();
-			ffmpeg.mkdirs();
-			ffprobe.mkdirs();
+		File ffmpeg = new File(PATH_TO_FFMPEG);
+		File videoLib = new File(PATH_TO_VIDEO);
+		if (!videoLib.exists() || (IS_WINDOWS_10 && !ffmpeg.exists())) {
+			videoLib.mkdirs();
+			if(IS_WINDOWS_10)
+				ffmpeg.mkdirs();
+			
 			JarFile jarFile = null;
 			try {
 				String classFilePath = Application.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("%20", " ");
 				String jarFilePath = classFilePath.substring(0, classFilePath.indexOf("WEB-INF")).replace("file:/", "").replace("!", "");
-				if(OS_NAME.equalsIgnoreCase("linux"))
+				if(!IS_WINDOWS_10)
 					jarFilePath = "/" + jarFilePath;
 				jarFile = new JarFile(jarFilePath);
 
 				Enumeration<JarEntry> entries = jarFile.entries();
 				while (entries.hasMoreElements()) {
 					JarEntry entry = entries.nextElement();
-					copyDirectory(entry, jarFilePath, "lib/ffmpeg");
-					copyDirectory(entry, jarFilePath, "lib/win");
-					copyDirectory(entry, jarFilePath, "lib/ffprobe");
+					if(IS_WINDOWS_10)
+						copyDirectory(entry, PATH_TO_FFMPEG);
+					copyDirectory(entry, PATH_TO_VIDEO);
 				}
 			} catch (IOException ioex) {
 				ioex.printStackTrace();
@@ -62,7 +65,7 @@ public class Application {
 		}
 	}
 
-	private static void copyDirectory(JarEntry entry, String jarFilePath, String dirName) throws IOException {
+	private static void copyDirectory(JarEntry entry, String dirName) throws IOException {
 		if (entry.getName().startsWith(dirName) && !entry.getName().equals(dirName + "/")) {
 			System.out.println("copy " + entry.getName());
 			InputStream fileStream = Application.class.getClassLoader().getResourceAsStream(entry.getName());
@@ -70,7 +73,7 @@ public class Application {
 			String fileName = chopped[chopped.length - 1];
 			File libFile = new File(dirName, fileName);
 			libFile.createNewFile();
-			if(OS_NAME.equalsIgnoreCase("linux")) {
+			if(!IS_WINDOWS_10) {
 				Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
 				perms.add(PosixFilePermission.OWNER_EXECUTE);
 				Files.setPosixFilePermissions(Paths.get(libFile.getPath()), perms);
