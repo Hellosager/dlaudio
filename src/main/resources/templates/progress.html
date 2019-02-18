@@ -1,54 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<link rel="stylesheet" type="text/css" href="css.css">
-<meta charset="ISO-8859-1">
-<title>Converting...</title>
-</head>
-<body>
-	<header>
-		<h1>Video Converter</h1>
-	</header>
-	<video autoplay muted loop id="myVideo">
-		<source src="background.mp4" type="video/mp4">
-	</video>
-
-	<div id="content">
-		<progress id="progress-bar" value="0" th:attr="max=${maxProgress}"></progress>
-		<div id="showProgress"></div>
-	</div>
-	<button id="backToHome" type="button" onclick="window.location.href='/'">Zurück</button>
-
-	<footer>
-		<p>Powered by S. Beck</p>
-		<p>Designed by J. Zimmermann</p>
-	</footer>
-
-	<script th:inline="javascript">
-		var progressNumber = 0;
-		updateProgress();
-
-		function updateProgress() {
-			if(progressNumber < [[${maxProgress}]]){
-				var xhttp = new XMLHttpRequest(); // create xhttpRequest
-				xhttp.open("GET", "/retrieveProgress/" + [[${pid}]], false); // specify GET-Method, path and set it to synchron Request
-				xhttp.send(); // send request
+	<head>
+		<link rel="stylesheet" type="text/css" href="css.css">
+		<meta charset="utf-8">
+		<title>Converting...</title>
+	</head>
+	<body>
+		<header>
+			<h1>Video Converter</h1>
+		</header>
+		<video autoplay muted loop id="myVideo">
+			<source src="background.mp4" type="video/mp4">
+		</video>
 	
-				var progressResponse = JSON.parse(xhttp.responseText); // parse JSON response into JS object
-				progressNumber = progressResponse.progress;
-				document.getElementById("progress-bar").setAttribute("value",
-					progressNumber); // use the parsed object to get the progress, the JSON delivered
-				if([[${type}]] === 'single'){
-					document.getElementById("showProgress").innerHTML = progressNumber + '%'; 
-				}else if([[${type}]] === 'multi' || [[${type}]] === 'singleVideo'){
-					document.getElementById("showProgress").innerHTML = 'Processed ' + progressNumber + " from " + [[${maxProgress}]] + ' links';
-				}
-				setTimeout("updateProgress()", 350); // one request per second
-			}else{
-				window.location = "/download/[[${pid}]]";
-			}
-		}
-	</script>
-
-</body>
+		<div id="content">
+			<progress id="progress-bar" value="0" th:attr="max=${maxProgress}"></progress>
+			<div id="showProgress"></div>
+		</div>
+		<button class="button1 button" id="backToHome" type="button" onclick="window.location.href='/'">ZurÃ¼ck</button>
+	
+		<footer>
+			<p>Powered by S. Beck</p>
+			<p>Designed by J. Zimmermann</p>
+		</footer>
+	
+		<script type="text/javascript" th:src="@{js/progress.js}"></script>
+	</body>
 </html>

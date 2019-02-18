@@ -50,7 +50,7 @@ public class DownloadController {
 		response.setContentType("video/mp4");
 		IOUtils.copy(stream, response.getOutputStream());
 	}
-
+	
 	@RequestMapping(value = "/download/{pid}", method = RequestMethod.GET)
 	public void downloadResource(@PathVariable(value = "pid") int pid,
 			HttpServletResponse response) {
@@ -132,6 +132,12 @@ public class DownloadController {
 		return "progress";
 	}
 
+	// TODO implement process kill for converting processes
+	@RequestMapping(value = "/leave", method = RequestMethod.GET)
+	public void leave(HttpServletResponse response) {
+		System.out.println("Leaving site...");
+	}
+	
 	private String zipFiles(String[] filePaths) throws IOException {
 		String uniqueZipName = "converted-mp3s-" + System.currentTimeMillis() + ".zip";
 		System.out.println("Storing downloaded files in " + "Musik/" + uniqueZipName);
