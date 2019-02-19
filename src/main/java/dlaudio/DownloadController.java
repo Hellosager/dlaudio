@@ -133,8 +133,10 @@ public class DownloadController {
 	}
 
 	// TODO implement process kill for converting processes
-	@RequestMapping(value = "/leave", method = RequestMethod.GET)
+	// ATTENTION!!! This could be called by anyone, find better way to cleanup after process termination by user
+	@RequestMapping(value = "/killProcess", method = RequestMethod.GET)
 	public void leave(HttpServletResponse response) {
+		// Call processes[pid].forceKill;
 		System.out.println("Leaving site...");
 	}
 	
