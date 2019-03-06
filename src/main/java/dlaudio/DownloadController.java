@@ -134,10 +134,11 @@ public class DownloadController {
 
 	// TODO implement process kill for converting processes
 	// ATTENTION!!! This could be called by anyone, find better way to cleanup after process termination by user
-	@RequestMapping(value = "/killProcess", method = RequestMethod.GET)
-	public void leave(HttpServletResponse response) {
-		// Call processes[pid].forceKill;
+	// AND DONT CALL IT BY PATH VAR
+	@RequestMapping(value = "/killProcess/{pid}", method = RequestMethod.GET)
+	public void leave(HttpServletResponse response, @PathVariable(value = "pid") int pid) {
 		System.out.println("Leaving site...");
+		processes.get(pid).kill();
 	}
 	
 	private String zipFiles(String[] filePaths) throws IOException {
