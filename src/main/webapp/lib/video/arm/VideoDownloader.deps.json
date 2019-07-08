@@ -10,7 +10,7 @@
       "VideoDownloader/1.0.0": {
         "dependencies": {
           "Microsoft.NETCore.App": "2.0.0",
-          "libvideo": "2.0.0.0"
+          "libvideo": "2.0.3.0"
         },
         "runtime": {
           "VideoDownloader.dll": {}
@@ -244,7 +244,7 @@
           "runtimes/linux-arm/native/libhostfxr.so": {}
         }
       },
-      "libvideo/2.0.0.0": {
+      "libvideo/2.0.3.0": {
         "runtime": {
           "libvideo.dll": {}
         }
@@ -327,7 +327,7 @@
       "path": "runtime.linux-arm.microsoft.netcore.dotnethostresolver/2.0.0",
       "hashPath": "runtime.linux-arm.microsoft.netcore.dotnethostresolver.2.0.0.nupkg.sha512"
     },
-    "libvideo/2.0.0.0": {
+    "libvideo/2.0.3.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
