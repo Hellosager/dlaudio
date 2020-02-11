@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.0/linux-arm",
-    "signature": "33fac8c510914dacfc48141344a21c5bb799115c"
+    "signature": "add05f98823d7a4374eb045d51b2d73a32797858"
   },
   "compilationOptions": {},
   "targets": {
@@ -10,7 +10,8 @@
       "VideoDownloader/1.0.0": {
         "dependencies": {
           "Microsoft.NETCore.App": "2.0.0",
-          "libvideo": "2.0.3.0"
+          "Newtonsoft.Json": "12.0.3",
+          "libvideo": "3.0.0.0"
         },
         "runtime": {
           "VideoDownloader.dll": {}
@@ -45,6 +46,11 @@
       "NETStandard.Library/2.0.0": {
         "dependencies": {
           "Microsoft.NETCore.Platforms": "2.0.0"
+        }
+      },
+      "Newtonsoft.Json/12.0.3": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
         }
       },
       "runtime.linux-arm.Microsoft.NETCore.App/2.0.0": {
@@ -244,7 +250,7 @@
           "runtimes/linux-arm/native/libhostfxr.so": {}
         }
       },
-      "libvideo/2.0.3.0": {
+      "libvideo/3.0.0.0": {
         "runtime": {
           "libvideo.dll": {}
         }
@@ -299,6 +305,13 @@
       "path": "netstandard.library/2.0.0",
       "hashPath": "netstandard.library.2.0.0.nupkg.sha512"
     },
+    "Newtonsoft.Json/12.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-aTRmXwR5xYu+mWxE8r8W1DWnL02SeV8LwdQMsLwTWP8OZgrCCyTqvOAe5hRb1VNQYXjln7qr0PKpSyO/pcc19Q==",
+      "path": "newtonsoft.json/12.0.3",
+      "hashPath": "newtonsoft.json.12.0.3.nupkg.sha512"
+    },
     "runtime.linux-arm.Microsoft.NETCore.App/2.0.0": {
       "type": "package",
       "serviceable": true,
@@ -327,7 +340,7 @@
       "path": "runtime.linux-arm.microsoft.netcore.dotnethostresolver/2.0.0",
       "hashPath": "runtime.linux-arm.microsoft.netcore.dotnethostresolver.2.0.0.nupkg.sha512"
     },
-    "libvideo/2.0.3.0": {
+    "libvideo/3.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

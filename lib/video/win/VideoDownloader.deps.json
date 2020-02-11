@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.0/win10-x64",
-    "signature": "b348c731e02a59ba78cd813014097d82edab6717"
+    "signature": "5d63d2bc500ba428361660201e79dcc3dca68514"
   },
   "compilationOptions": {},
   "targets": {
@@ -10,7 +10,8 @@
       "VideoDownloader/1.0.0": {
         "dependencies": {
           "Microsoft.NETCore.App": "2.0.0",
-          "libvideo": "2.0.3.0"
+          "Newtonsoft.Json": "12.0.3",
+          "libvideo": "3.0.0.0"
         },
         "runtime": {
           "VideoDownloader.dll": {}
@@ -45,6 +46,11 @@
       "NETStandard.Library/2.0.0": {
         "dependencies": {
           "Microsoft.NETCore.Platforms": "2.0.0"
+        }
+      },
+      "Newtonsoft.Json/12.0.3": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
         }
       },
       "runtime.win-x64.Microsoft.NETCore.App/2.0.0": {
@@ -282,7 +288,7 @@
           "runtimes/win-x64/native/hostfxr.dll": {}
         }
       },
-      "libvideo/2.0.3.0": {
+      "libvideo/3.0.0.0": {
         "runtime": {
           "libvideo.dll": {}
         }
@@ -337,6 +343,13 @@
       "path": "netstandard.library/2.0.0",
       "hashPath": "netstandard.library.2.0.0.nupkg.sha512"
     },
+    "Newtonsoft.Json/12.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-aTRmXwR5xYu+mWxE8r8W1DWnL02SeV8LwdQMsLwTWP8OZgrCCyTqvOAe5hRb1VNQYXjln7qr0PKpSyO/pcc19Q==",
+      "path": "newtonsoft.json/12.0.3",
+      "hashPath": "newtonsoft.json.12.0.3.nupkg.sha512"
+    },
     "runtime.win-x64.Microsoft.NETCore.App/2.0.0": {
       "type": "package",
       "serviceable": true,
@@ -365,7 +378,7 @@
       "path": "runtime.win-x64.microsoft.netcore.dotnethostresolver/2.0.0",
       "hashPath": "runtime.win-x64.microsoft.netcore.dotnethostresolver.2.0.0.nupkg.sha512"
     },
-    "libvideo/2.0.3.0": {
+    "libvideo/3.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
