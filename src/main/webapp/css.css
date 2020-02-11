@@ -163,30 +163,74 @@ form input:first-child {
 
 form input {
 	width: 80%;
-	height: 30px;
 }
+
 form input[type=file]{
-		color: white;
-	font-family: 'Roboto Splap', serif;
-	font-size: 15px;
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
 } 
+
+.fileInputLabel {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: white;
+    background-color: #ba5d5d;
+    display: inline-block;
+    padding: 10px;
+    width: 50%;
+    margin-bottom: 10px;
+}
+
+.fileInputLabel:hover {
+	background-color: #9c4d4d;
+	color: #bebebe;
+}
+
 .input_text {
 	color: #494949;
+	height: 30px;
 	padding-left:10px;
 }
+
 .button {
-	background-color: #f0f0f0;
-	color: #494949;
-	width: 80%;
-	height: 50px;
+  background-color: #4CAF50; /* Green */
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+  cursor: pointer;
 }
-.button:hover {
-	background-color: #494949;
-	color: #f0f0f0;
+
+.button1 {
+  background-color: #ada9a0;
+  color: #555555;
 }
+
+.button1:hover {
+  background-color: #555555;
+  color: #ada9a0;
+}
+
+#backToHome {
+	width: 25%;
+	font-size: 40px;
+}
+
 #content{
 	margin-top: 100px;
 }
+
 #myVideo {
     position: fixed;
     right: 0;
