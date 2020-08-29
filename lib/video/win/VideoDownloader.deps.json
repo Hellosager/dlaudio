@@ -11,7 +11,7 @@
         "dependencies": {
           "Microsoft.NETCore.App": "2.0.0",
           "Newtonsoft.Json": "12.0.3",
-          "libvideo": "3.0.0.0"
+          "libvideo": "3.0.2.0"
         },
         "runtime": {
           "VideoDownloader.dll": {}
@@ -288,7 +288,7 @@
           "runtimes/win-x64/native/hostfxr.dll": {}
         }
       },
-      "libvideo/3.0.0.0": {
+      "libvideo/3.0.2.0": {
         "runtime": {
           "libvideo.dll": {}
         }
@@ -378,7 +378,7 @@
       "path": "runtime.win-x64.microsoft.netcore.dotnethostresolver/2.0.0",
       "hashPath": "runtime.win-x64.microsoft.netcore.dotnethostresolver.2.0.0.nupkg.sha512"
     },
-    "libvideo/3.0.0.0": {
+    "libvideo/3.0.2.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
